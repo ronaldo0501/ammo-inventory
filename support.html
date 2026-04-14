@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support — Ammo Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #161718; --surface: #1e2022; --surface2: #252729;
+    --border: rgba(255,255,255,0.08); --text1: #ffffff;
+    --text2: rgba(255,255,255,0.55); --text3: rgba(255,255,255,0.30);
+    --accent: #3fa8f4; --green: #4dd98c; --amber: #f4b340;
+  }
+  body { background: var(--bg); color: var(--text1); font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.7; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 40px; background: rgba(22,23,24,0.85);
+    backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; font-family: 'Share Tech Mono', monospace; font-size: 14px; letter-spacing: 2px; color: var(--text1); text-decoration: none; }
+  .nav-logo .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .nav-back { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 1.5px; color: var(--text2); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-back:hover { color: var(--accent); }
+  .page { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 120px 24px 80px; }
+  .page-eyebrow { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+  .page-title { font-family: 'Barlow Condensed', sans-serif; font-size: 56px; font-weight: 800; text-transform: uppercase; line-height: 1; margin-bottom: 8px; }
+  .page-sub { color: var(--text2); margin-bottom: 48px; font-size: 18px; font-weight: 300; }
+  .divider { height: 1px; background: var(--border); margin-bottom: 48px; }
+  h2 { font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; margin: 48px 0 16px; }
+  p { color: var(--text2); margin-bottom: 16px; }
+  a { color: var(--accent); }
+
+  .faq-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+  .faq-question {
+    width: 100%; text-align: left; background: var(--surface);
+    border: none; padding: 20px 24px; cursor: pointer;
+    font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600;
+    color: var(--text1); display: flex; justify-content: space-between;
+    align-items: center; transition: background 0.2s;
+  }
+  .faq-question:hover { background: var(--surface2); }
+  .faq-question .arrow { color: var(--accent); font-size: 18px; transition: transform 0.2s; }
+  .faq-question.open .arrow { transform: rotate(45deg); }
+  .faq-answer { display: none; padding: 0 24px 20px; background: var(--surface); }
+  .faq-answer.open { display: block; }
+  .faq-answer p { margin-bottom: 0; }
+
+  .contact-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 32px; text-align: center; margin-top: 16px;
+  }
+  .contact-icon { font-size: 40px; margin-bottom: 16px; }
+  .contact-card h3 { font-family: 'Share Tech Mono', monospace; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text1); margin-bottom: 8px; }
+  .contact-card p { color: var(--text2); margin-bottom: 20px; }
+  .contact-btn {
+    display: inline-block; background: var(--accent); color: #000;
+    font-family: 'Share Tech Mono', monospace; font-size: 12px;
+    letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none;
+    padding: 12px 24px; border-radius: 6px; transition: opacity 0.2s;
+  }
+  .contact-btn:hover { opacity: 0.85; }
+
+  footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 32px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .footer-logo { font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--text3); }
+  .footer-links { display: flex; gap: 24px; list-style: none; }
+  .footer-links a { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text3); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>AMMO INVENTORY</a>
+  <a href="index.html" class="nav-back">← Back</a>
+</nav>
+
+<div class="page">
+  <p class="page-eyebrow">Help Center</p>
+  <h1 class="page-title">Support</h1>
+  <p class="page-sub">We're here to help. Find answers below or reach out directly.</p>
+  <div class="divider"></div>
+
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      How do I add ammo to my inventory?
+      <span class="arrow">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>Tap the <strong>+</strong> button in the top right corner of the Inventory screen. Select your category, choose your caliber from the dropdown, enter the quantity, and tap "Add to Inventory."</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      How do I log rounds I've used?
+      <span class="arrow">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>Tap the <strong>−</strong> button in the top right corner. Select the category and caliber you used, enter the quantity, and tap "Log Use." The app will only let you log rounds you actually have in inventory.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      How do I set a low stock alert for a specific caliber?
+      <span class="arrow">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>Swipe left on any ammo row in the inventory list. Tap the blue <strong>Edit</strong> button (sliders icon). Enter your desired threshold and tap "Save Threshold." You'll see a warning badge on that row whenever it drops to or below that number.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      How do I delete an ammo entry?
+      <span class="arrow">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>Swipe left on any ammo row and tap the red <strong>Delete</strong> button. You'll be asked to confirm before it's removed.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      Is my inventory data backed up?
+      <span class="arrow">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>Your inventory is stored locally on your device. It will be included in your standard iOS device backup (iCloud or iTunes). If you delete the app your inventory data will be lost, so make sure you have device backups enabled.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      Why am I seeing advertisements?
+      <span class="arrow">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>Ammo Inventory is free to download and supported by ads from Google AdMob. A banner ad appears at the bottom of the inventory screen and occasional full-screen ads may appear after logging transactions. This keeps the app free for everyone.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      A caliber I use isn't listed. Can it be added?
+      <span class="arrow">+</span>
+    </button>
+    <div class="faq-answer">
+      <p>We're always looking to expand our caliber list. Please use the contact form below to request a caliber and we'll consider adding it in a future update.</p>
+    </div>
+  </div>
+
+  <h2>Contact Us</h2>
+  <div class="contact-card">
+    <div class="contact-icon">✉️</div>
+    <h3>Send Us a Message</h3>
+    <p>Can't find what you're looking for? Have a feature request or found a bug? We'd love to hear from you.</p>
+    <a href="mailto:support@ammoinventoryapp.com" class="contact-btn">Email Support</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Ammo Inventory © 2025</div>
+  <ul class="footer-links">
+    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="terms.html">Terms of Use</a></li>
+    <li><a href="support.html">Support</a></li>
+  </ul>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-question').forEach(b => b.classList.remove('open'));
+  if (!isOpen) {
+    answer.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+</script>
+</body>
+</html>

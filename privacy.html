@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Ammo Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #161718; --surface: #1e2022; --surface2: #252729;
+    --border: rgba(255,255,255,0.08); --text1: #ffffff;
+    --text2: rgba(255,255,255,0.55); --text3: rgba(255,255,255,0.30);
+    --accent: #3fa8f4;
+  }
+  body { background: var(--bg); color: var(--text1); font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.7; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 40px; background: rgba(22,23,24,0.85);
+    backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Share Tech Mono', monospace; font-size: 14px;
+    letter-spacing: 2px; color: var(--text1); text-decoration: none;
+  }
+  .nav-logo .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .nav-back {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    letter-spacing: 1.5px; color: var(--text2); text-decoration: none;
+    text-transform: uppercase; transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .page { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 120px 24px 80px; }
+  .page-eyebrow {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: 12px;
+  }
+  .page-title {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 56px;
+    font-weight: 800; text-transform: uppercase; line-height: 1; margin-bottom: 8px;
+  }
+  .page-date {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    color: var(--text3); margin-bottom: 48px;
+  }
+  .divider { height: 1px; background: var(--border); margin-bottom: 48px; }
+  h2 {
+    font-family: 'Share Tech Mono', monospace; font-size: 12px;
+    letter-spacing: 2px; color: var(--accent); text-transform: uppercase;
+    margin: 40px 0 12px;
+  }
+  p { color: var(--text2); margin-bottom: 16px; }
+  ul { color: var(--text2); padding-left: 20px; margin-bottom: 16px; }
+  ul li { margin-bottom: 8px; }
+  a { color: var(--accent); }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  }
+  footer {
+    position: relative; z-index: 1; border-top: 1px solid var(--border);
+    padding: 32px 40px; display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+  .footer-logo { font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--text3); }
+  .footer-links { display: flex; gap: 24px; list-style: none; }
+  .footer-links a { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text3); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>AMMO INVENTORY</a>
+  <a href="index.html" class="nav-back">← Back</a>
+</nav>
+
+<div class="page">
+  <p class="page-eyebrow">Legal</p>
+  <h1 class="page-title">Privacy Policy</h1>
+  <p class="page-date">Last updated: January 1, 2025</p>
+  <div class="divider"></div>
+
+  <p>This Privacy Policy describes how Ammo Inventory ("we", "us", or "our") handles information when you use our iOS application. We are committed to protecting your privacy.</p>
+
+  <h2>Information We Collect</h2>
+  <div class="card">
+    <p><strong style="color: var(--text1);">Data stored on your device:</strong> All ammo inventory data you enter — including calibers, categories, and quantities — is stored locally on your device using iOS's built-in storage. This data never leaves your device and is not transmitted to our servers.</p>
+  </div>
+  <div class="card">
+    <p><strong style="color: var(--text1);">Advertising data:</strong> Ammo Inventory uses Google AdMob to display advertisements. AdMob may collect certain information to serve relevant ads, including device identifiers, IP address, and general location. This data collection is governed by Google's Privacy Policy.</p>
+  </div>
+
+  <h2>How We Use Information</h2>
+  <p>We do not collect, store, or transmit any personal information to our own servers. Your inventory data stays entirely on your device.</p>
+  <p>Advertising data collected by Google AdMob is used solely to serve advertisements within the app. We do not have access to this data.</p>
+
+  <h2>Third-Party Services</h2>
+  <p>Ammo Inventory uses the following third-party service:</p>
+  <ul>
+    <li><strong style="color: var(--text1);">Google AdMob</strong> — for displaying advertisements. View Google's Privacy Policy at <a href="https://policies.google.com/privacy" target="_blank">policies.google.com/privacy</a></li>
+  </ul>
+
+  <h2>Data Retention</h2>
+  <p>Your inventory data is stored locally on your device and remains there until you delete the app or manually remove entries. We have no access to this data and cannot retrieve or delete it on your behalf.</p>
+
+  <h2>Children's Privacy</h2>
+  <p>Ammo Inventory is not directed at children under the age of 13. We do not knowingly collect personal information from children under 13.</p>
+
+  <h2>Your Rights</h2>
+  <p>Since all your data is stored locally on your device, you have full control over it at all times. You can delete all data by removing the app from your device.</p>
+
+  <h2>Changes to This Policy</h2>
+  <p>We may update this Privacy Policy from time to time. We will notify you of any changes by updating the "Last updated" date at the top of this page.</p>
+
+  <h2>Contact Us</h2>
+  <p>If you have any questions about this Privacy Policy, please visit our <a href="support.html">Support page</a>.</p>
+</div>
+
+<footer>
+  <div class="footer-logo">Ammo Inventory © 2025</div>
+  <ul class="footer-links">
+    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="terms.html">Terms of Use</a></li>
+    <li><a href="support.html">Support</a></li>
+  </ul>
+</footer>
+</body>
+</html>

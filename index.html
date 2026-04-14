@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ammo Inventory — Track Your Rounds</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #161718;
+    --surface: #1e2022;
+    --surface2:#252729;
+    --border:  rgba(255,255,255,0.08);
+    --text1:   #ffffff;
+    --text2:   rgba(255,255,255,0.55);
+    --text3:   rgba(255,255,255,0.30);
+    --accent:  #3fa8f4;
+    --green:   #4dd98c;
+    --amber:   #f4b340;
+    --violet:  #9470e5;
+    --orange:  #f48c34;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text1);
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Grid texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    background: rgba(22,23,24,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--text1);
+    text-decoration: none;
+  }
+
+  .nav-logo .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--text2);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-bg-circle {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(63,168,244,0.06) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+
+  .hero-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(56px, 10vw, 112px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.4s;
+  }
+
+  .hero-title span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--text2);
+    max-width: 480px;
+    margin: 0 auto 40px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.6s;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 4px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.8s;
+  }
+
+  .hero-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(63,168,244,0.3);
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 80px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 1s;
+  }
+
+  .hero-stat-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 32px;
+    color: var(--text1);
+  }
+
+  .hero-stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* FEATURES */
+  .features {
+    position: relative;
+    z-index: 1;
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 64px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(63,168,244,0.3);
+    transform: translateY(-2px);
+  }
+
+  .feature-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .feature-icon.blue   { background: rgba(63,168,244,0.12); }
+  .feature-icon.green  { background: rgba(77,217,140,0.12); }
+  .feature-icon.amber  { background: rgba(244,179,64,0.12); }
+  .feature-icon.violet { background: rgba(148,112,229,0.12); }
+  .feature-icon.orange { background: rgba(244,140,52,0.12); }
+
+  .feature-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--text1);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .feature-desc {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* CATEGORIES */
+  .categories {
+    position: relative;
+    z-index: 1;
+    padding: 100px 24px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .categories-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 64px;
+  }
+
+  .cat-card {
+    border-radius: 12px;
+    padding: 28px 20px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+
+  .cat-card.rimfire  { background: rgba(148,112,229,0.08); border-color: rgba(148,112,229,0.2); }
+  .cat-card.shotgun  { background: rgba(244,140,52,0.08);  border-color: rgba(244,140,52,0.2);  }
+  .cat-card.handgun  { background: rgba(63,168,244,0.08);  border-color: rgba(63,168,244,0.2);  }
+  .cat-card.rifle    { background: rgba(77,217,140,0.08);  border-color: rgba(77,217,140,0.2);  }
+
+  .cat-icon { font-size: 32px; margin-bottom: 12px; }
+
+  .cat-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .cat-name.rimfire  { color: var(--violet); }
+  .cat-name.shotgun  { color: var(--orange); }
+  .cat-name.handgun  { color: var(--accent); }
+  .cat-name.rifle    { color: var(--green);  }
+
+  .cat-count {
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  /* DOWNLOAD */
+  .download {
+    position: relative;
+    z-index: 1;
+    padding: 120px 24px;
+    text-align: center;
+  }
+
+  .download-inner { max-width: 600px; margin: 0 auto; }
+
+  .app-store-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--text1);
+    color: #000;
+    text-decoration: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    margin-top: 40px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .app-store-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(255,255,255,0.15);
+  }
+
+  .app-store-btn svg { width: 24px; height: 24px; }
+
+  .app-store-text { text-align: left; }
+  .app-store-text .sub { font-size: 10px; color: #555; }
+  .app-store-text .main { font-size: 16px; font-weight: 700; }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 40px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-logo {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text3);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--accent); }
+
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; }
+    .cat-grid { grid-template-columns: repeat(2, 1fr); }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="dot"></span>
+    AMMO INVENTORY
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#categories">Calibers</a></li>
+    <li><a href="support.html">Support</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg-circle"></div>
+  <div>
+    <p class="hero-eyebrow">iOS App — Available on the App Store</p>
+    <h1 class="hero-title">Know Your<br><span>Arsenal.</span></h1>
+    <p class="hero-sub">The tactical ammo inventory app built for serious shooters. Track every round, every caliber, every category.</p>
+    <a href="https://apps.apple.com" class="hero-cta">
+      ⬇ Download on the App Store
+    </a>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-value">150+</div>
+        <div class="hero-stat-label">Calibers</div>
+      </div>
+      <div>
+        <div class="hero-stat-value">4</div>
+        <div class="hero-stat-label">Categories</div>
+      </div>
+      <div>
+        <div class="hero-stat-value">Free</div>
+        <div class="hero-stat-label">To Download</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <p class="section-label">What It Does</p>
+  <h2 class="section-title">Built for<br>the Range</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon blue">📦</div>
+      <div class="feature-title">Full Inventory Tracking</div>
+      <p class="feature-desc">Add and log rounds across 150+ calibers organized into Rimfire, Shotgun, Handgun, and Rifle categories.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon amber">⚠️</div>
+      <div class="feature-title">Low Stock Alerts</div>
+      <p class="feature-desc">Set a custom alert threshold per caliber. Get warned the moment any round drops below your limit.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon green">📊</div>
+      <div class="feature-title">Statistics Dashboard</div>
+      <p class="feature-desc">See your total round count, per-category breakdowns, and low stock alerts all in one view.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon violet">🔍</div>
+      <div class="feature-title">Instant Search</div>
+      <p class="feature-desc">Search across all calibers and categories instantly. Find any round in your inventory in seconds.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon orange">⚡</div>
+      <div class="feature-title">Fast Logging</div>
+      <p class="feature-desc">Log rounds added or used in seconds. The app remembers your inventory between every session.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon blue">🌙</div>
+      <div class="feature-title">Tactical Dark UI</div>
+      <p class="feature-desc">Purpose-built dark interface designed for clarity in any lighting condition, indoors or at the range.</p>
+    </div>
+  </div>
+</section>
+
+<section class="categories" id="categories">
+  <div class="categories-inner">
+    <p class="section-label">Supported Categories</p>
+    <h2 class="section-title">Every Round<br>Accounted For</h2>
+    <div class="cat-grid">
+      <div class="cat-card rimfire">
+        <div class="cat-icon">🎯</div>
+        <div class="cat-name rimfire">Rimfire</div>
+        <div class="cat-count">7 calibers</div>
+      </div>
+      <div class="cat-card shotgun">
+        <div class="cat-icon">🔫</div>
+        <div class="cat-name shotgun">Shotgun</div>
+        <div class="cat-count">7 calibers</div>
+      </div>
+      <div class="cat-card handgun">
+        <div class="cat-icon">🤚</div>
+        <div class="cat-name handgun">Handgun</div>
+        <div class="cat-count">43 calibers</div>
+      </div>
+      <div class="cat-card rifle">
+        <div class="cat-icon">🎖️</div>
+        <div class="cat-name rifle">Rifle</div>
+        <div class="cat-count">100+ calibers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="download">
+  <div class="download-inner">
+    <p class="section-label">Get Started</p>
+    <h2 class="section-title">Download<br>Free Today</h2>
+    <p style="color: var(--text2); margin-top: 16px;">Available on iPhone. Free to download.</p>
+    <a href="https://apps.apple.com" class="app-store-btn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <div class="app-store-text">
+        <div class="sub">Download on the</div>
+        <div class="main">App Store</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Ammo Inventory © 2024</div>
+  <ul class="footer-links">
+    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="terms.html">Terms of Use</a></li>
+    <li><a href="support.html">Support</a></li>
+  </ul>
+  <div class="footer-copy">Built by Brandon Wright</div>
+</footer>
+
+</body>
+</html>
